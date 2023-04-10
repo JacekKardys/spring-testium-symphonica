@@ -57,4 +57,4 @@ jobs:
             VERSION_LEVEL="release"
           fi
           standard-version --${VERSION_LEVEL} --commit-all
-          git push --follow-tags
+          git push --set-upstream --follow-tags origin develop
