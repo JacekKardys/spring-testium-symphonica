@@ -5,28 +5,38 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ec.testium</groupId>
-    <artifactId>spring-testium-symphonica</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>spring-testium-symphonica-parent</artifactId>
+    <version>0.0.1</version>
     <name>Spring Testium Symphonica Parent</name>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>spring-testium-symphonica</module>
+        <module>spring-testium-symphonica-autoconfigure</module>
+        <module>spring-testium-symphonica-starter</module>
+        <module>spring-testium-symphonica-sample-app</module>
+        <module>spring-testium-symphonica-sample-app-spec</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
+
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <unit-tests.pattern>**/*Test</unit-tests.pattern>
         <integration-tests.pattern>**/*IT</integration-tests.pattern>
 
         <spring-boot.version>2.7.6</spring-boot.version>
         <spock.version>2.3-groovy-3.0</spock.version>
-
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <test-containers.version>1.18.0</test-containers.version>
 
         <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
         <gmavenplus-plugin.version>2.1.0</gmavenplus-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <lombok.version>1.18.26</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -45,22 +55,49 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${test-containers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <modules>
-        <module>spring-testium-symphonica</module>
-        <module>spring-testium-symphonica-autoconfigure</module>
-        <module>spring-testium-symphonica-starter</module>
-        <module>spring-testium-symphonica-sample-app</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>${gmavenplus-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-wrapper-plugin</artifactId>
-                <version>3.2.0</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
         </plugins>
     </build>

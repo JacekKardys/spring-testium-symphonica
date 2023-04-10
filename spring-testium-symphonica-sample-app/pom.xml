@@ -8,8 +8,113 @@
 
     <parent>
         <groupId>com.ec.testium</groupId>
-        <artifactId>spring-testium-symphonica</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>spring-testium-symphonica-parent</artifactId>
+        <version>0.0.1</version>
     </parent>
 
+    <properties>
+        <sample-app.spec.version.version>0.0.1</sample-app.spec.version.version>
+        <sample-app.spec.name>sample-app-spec.yaml</sample-app.spec.name>
+
+        <swagger-parser.version>2.1.12</swagger-parser.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
+
+        <openapi-generator-maven-plugin.version>6.2.0</openapi-generator-maven-plugin.version>
+        <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser</artifactId>
+            <version>${swagger-parser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+
+        <!-- Just for Maven -->
+        <dependency>
+            <groupId>com.ec.testium</groupId>
+            <artifactId>spring-testium-symphonica-sample-app-spec</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ec.testium</groupId>
+            <artifactId>spring-testium-symphonica</artifactId>
+            <version>0.0.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack-openapi-spec</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.ec.testium</groupId>
+                                    <artifactId>spring-testium-symphonica-sample-app-spec</artifactId>
+                                    <version>${sample-app.spec.version.version}</version>
+                                    <includes>**/${sample-app.spec.name}</includes>
+                                    <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.build.directory}/generated-resources/${sample-app.spec.name}</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.es.testium.sample.api</apiPackage>
+                            <modelPackage>com.es.testium.sample.model</modelPackage>
+                            <configOptions>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <delegatePattern>true</delegatePattern>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compileTests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
