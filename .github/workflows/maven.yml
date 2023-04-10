@@ -45,14 +45,16 @@ jobs:
         run: mvn -B clean verify --file pom.xml
 
       - name: Bump version and create release
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+        if: github.event_name == 'pull_request'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          BRANCH_NAME=${GITHUB_REF##*/}
+          git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+          git checkout ${{ github.base_ref }}
+          BRANCH_NAME=${GITHUB_BASE_REF##*/}
           VERSION_LEVEL="patch"
           if [ "$BRANCH_NAME" == "main" ]; then
             VERSION_LEVEL="release"
           fi
           standard-version --${VERSION_LEVEL} --commit-all
-          git push --follow-tags
+          git push --set-upstream --follow-tags origin develop
